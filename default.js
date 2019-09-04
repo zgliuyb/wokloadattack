@@ -3,8 +3,9 @@ const multiplier = 1000000000;
 
 const debug = true
 
-const high_level = 10
-const low_level = 10
+let high_level = 10
+let low_level = 10
+let seq = "1010101";
 
 //==============================================
 function waiting(ms) {
@@ -59,7 +60,6 @@ function calculatePrimes(iterations, multiplier) {
  * @returns {Promise<void>}
  */
 async function main() {
-    let seq = "1010101";
     for (let i = 0; i < seq.length; i++) {
         if (seq[i] == '1') {
             running(high_level * 1000)
@@ -77,6 +77,9 @@ async function main() {
 
 $(function () {
     $("#ntu-starter").on("click", function () {
+        seq = $("#tdc-input-info").val();
+        high_level = $("#tdc-input-hl").val();
+        low_level = $("#tdc-input-lw").val();
         Promise.resolve().then(() => {
             if (debug) {
                 console.log("App started");

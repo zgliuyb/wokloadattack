@@ -44,7 +44,9 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-12 text-center">
-            <h1 class="mt-5">Click the following button to start</h1>
+            <h1 class="mt-5" style="text-align: left;border-bottom: 1px dashed #cbd3da;padding-bottom: 5px;">Click the
+                following button to
+                start</h1>
             <p></p>
             <button type="button" class="btn btn-primary btn-lg" id="ntu-starter">Start Transfer</button>
             <button type="button" class="btn btn-danger btn-lg" id="ntu-cleaner">Clean</button>
@@ -52,6 +54,33 @@
             <div class="alert alert-warning" role="alert" id="ntu-state">
                 Waiting for running!
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="card tdc-card">
+                <h5 class="card-header h5">Parameters</h5>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="tdc-input-info">Infomation</label>
+                            <input type="text" class="form-control" id="tdc-input-info"
+                                   placeholder="10101010">
+                        </div>
+                        <div class="form-group">
+                            <label for="tdc-input-hl">High Level Duration (sec)</label>
+                            <input type="text" class="form-control" id="tdc-input-hl" placeholder="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="tdc-input-lw">Low Level Duration (sec)</label>
+                            <input type="text" class="form-control" id="tdc-input-lw"
+                                   placeholder="5">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-7">
             <div class="card tdc-card">
                 <h5 class="card-header h5">Debug Information</h5>
                 <div class="card-body">
