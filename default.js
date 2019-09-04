@@ -75,31 +75,35 @@ async function main() {
     }
 }
 
+function runTest() {
+    // seq = $("#tdc-input-info").val();
+    // high_level = $("#tdc-input-hl").val();
+    // low_level = $("#tdc-input-lw").val();
+    Promise.resolve().then(() => {
+        if (debug) {
+            console.log("App started");
+            $("#ntu-state").text("Running!")
+        }
+        $("#ntu-starter").prop("disabled", true)
+        $("#ntu-cleaner").prop("disabled", true)
+    }).then(() => {
+        setTimeout(function () {
+            main().then(r => {
+                $("#ntu-starter").prop("disabled", false)
+                $("#ntu-cleaner").prop("disabled", false)
+
+                $('#ntu-state').removeClass('alert-warning').addClass('alert-success');
+
+                $("#ntu-state").text("Finished!");
+            })
+        }, 100);
+
+    });
+}
+
 $(function () {
     $("#ntu-starter").on("click", function () {
-        seq = $("#tdc-input-info").val();
-        high_level = $("#tdc-input-hl").val();
-        low_level = $("#tdc-input-lw").val();
-        Promise.resolve().then(() => {
-            if (debug) {
-                console.log("App started");
-                $("#ntu-state").text("Running!")
-            }
-            $("#ntu-starter").prop("disabled", true)
-            $("#ntu-cleaner").prop("disabled", true)
-        }).then(() => {
-            setTimeout(function () {
-                main().then(r => {
-                    $("#ntu-starter").prop("disabled", false)
-                    $("#ntu-cleaner").prop("disabled", false)
-
-                    $('#ntu-state').removeClass('alert-warning').addClass('alert-success');
-
-                    $("#ntu-state").text("Finished!");
-                })
-            }, 100);
-
-        });
+        runTest();
     });
     $("#ntu-cleaner").on("click", function () {
         $("#ntu-message").empty()

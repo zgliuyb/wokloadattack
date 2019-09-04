@@ -49,7 +49,7 @@
                 start</h1>
             <p></p>
             <button type="button" class="btn btn-primary btn-lg" id="ntu-starter">Start Transfer</button>
-            <button type="button" class="btn btn-danger btn-lg" id="ntu-cleaner">Clean</button>
+            <button type="button" class="btn btn-danger btn-lg" id="ntu-cleaner">Clean Output</button>
             <p></p>
             <div class="alert alert-warning" role="alert" id="ntu-state">
                 Waiting for running!
@@ -61,20 +61,30 @@
             <div class="card tdc-card">
                 <h5 class="card-header h5">Parameters</h5>
                 <div class="card-body">
-                    <form>
+                    <form id="tdc-form" role="form" data-toggle="validator">
                         <div class="form-group">
-                            <label for="tdc-input-info">Infomation</label>
-                            <input type="text" class="form-control" id="tdc-input-info"
-                                   placeholder="10101010">
+                            <label for="tdcInputInfo">Infomation</label>
+                            <input type="text" maxlength="15" class="form-control" id="tdcInputInfo"
+                                   placeholder="101010">
+                            <div class="invalid-feedback">
+                                Please provide a valid transfer code.
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="tdc-input-hl">High Level Duration (sec)</label>
-                            <input type="text" class="form-control" id="tdc-input-hl" placeholder="5">
-                        </div>
-                        <div class="form-group">
-                            <label for="tdc-input-lw">Low Level Duration (sec)</label>
-                            <input type="text" class="form-control" id="tdc-input-lw"
+                            <label for="tdcInputHL">High Level Duration (sec)</label>
+                            <input type="text" class="form-control" type="number" maxlength="2" id="tdcInputHL"
                                    placeholder="5">
+                            <div class="invalid-feedback">
+                                Please provide a valid duration.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tdcInputLL">Low Level Duration (sec)</label>
+                            <input type="text" class="form-control" type="number" maxlength="2" id="tdcInputLL"
+                                   placeholder="5">
+                            <div class="invalid-feedback">
+                                Please provide a valid duration.
+                            </div>
                         </div>
                     </form>
                 </div>
