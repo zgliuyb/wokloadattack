@@ -75,11 +75,18 @@ async function main() {
     }
 }
 
-function runTest() {
+function isEmpty(property) {
+    return (property === null || property === "" || typeof property === "undefined");
+}
 
-    seq1 = $("#tdc-input-info").val();
-    high_level1 = $("#tdc-input-hl").val();
-    low_level1 = $("#tdc-input-lw").val();
+function runTest() {
+    let tmp = $("#tdcInputInfo").val()
+    seq = isEmpty(tmp) ? seq : tmp;
+    tmp = $("#tdcInputHL").val()
+    high_level = isEmpty(tmp) ? parseInt(high_level) : tmp;
+    tmp = $("#tdcInputLL").val()
+    low_level = isEmpty(tmp) ? parseInt(low_level) : tmp;
+    console.log(seq, high_level, low_level)
     Promise.resolve().then(() => {
         if (debug) {
             console.log("App started");
