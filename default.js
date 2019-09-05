@@ -76,9 +76,10 @@ async function main() {
 }
 
 function runTest() {
-    // seq = $("#tdc-input-info").val();
-    // high_level = $("#tdc-input-hl").val();
-    // low_level = $("#tdc-input-lw").val();
+
+    seq1 = $("#tdc-input-info").val();
+    high_level1 = $("#tdc-input-hl").val();
+    low_level1 = $("#tdc-input-lw").val();
     Promise.resolve().then(() => {
         if (debug) {
             console.log("App started");
@@ -107,5 +108,13 @@ $(function () {
     });
     $("#ntu-cleaner").on("click", function () {
         $("#ntu-message").empty()
+    });
+    $("#tdcInputInfo, #tdcInputHL, #tdcInputLL").on("keyup", function () {
+        if (!/^\d+$/.test($(this).val())) {
+            $(this).addClass('is-invalid');
+            return false;
+        } else {
+            $(this).removeClass('is-invalid');
+        }
     });
 });
