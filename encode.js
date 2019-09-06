@@ -6,6 +6,7 @@ const debug = true
 let high_level = 10
 let low_level = 10
 let seq = "1010101";
+let finalOut = []
 
 //==============================================
 function waiting(ms) {
@@ -55,6 +56,11 @@ function calculatePrimes(iterations, multiplier) {
     return primes;
 }
 
+function getCurTime() {
+    let startTime = new Date().toISOString()
+    return startTime;
+}
+
 /**
  * Main function
  * @returns {Promise<void>}
@@ -62,13 +68,19 @@ function calculatePrimes(iterations, multiplier) {
 async function main() {
     for (let i = 0; i < seq.length; i++) {
         if (seq[i] == '1') {
+            let startTime = getCurTime();
             running(high_level * 1000)
+            let endTime = getCurTime();
             if (debug) {
-                $("#ntu-message").append("<li class=\"list-group-item list-group-item-success\">A bit '1' has been sent!</li>")
+                $("#ntu-message").append("<li class=\"list-group-item list-group-item-success\">" + startTime + "<->" + endTime + ": Bit 1</li>")
             }
+            finalOut.push([startTime, endTime, 1])
         } else {
+            let startTime = getCurTime()
             await waiting(high_level * 1000).then(() => {
-                $("#ntu-message").append("<li class=\"list-group-item list-group-item-danger\">A bit '0' has been sent!</li>")
+                let endTime = getCurTime()
+                finalOut.push([startTime, endTime, 0])
+                $("#ntu-message").append("<li class=\"list-group-item list-group-item-danger\">" + startTime + "<->" + endTime + ": Bit 0</li>")
             })
             await waiting(300)
         }
@@ -79,7 +91,7 @@ function isEmpty(property) {
     return (property === null || property === "" || typeof property === "undefined");
 }
 
-function runTest() {
+function startEncoding() {
     let tmp = $("#tdcInputInfo").val()
     seq = isEmpty(tmp) ? seq : tmp;
     tmp = $("#tdcInputHL").val()
@@ -103,6 +115,8 @@ function runTest() {
                 $('#ntu-state').removeClass('alert-warning').addClass('alert-success');
 
                 $("#ntu-state").text("Finished!");
+                $("#tdcFinalResult").val(JSON.stringify(finalOut));
+                $("#tdcOverlay").hide(300);
             })
         }, 100);
 
@@ -111,7 +125,8 @@ function runTest() {
 
 $(function () {
     $("#ntu-starter").on("click", function () {
-        runTest();
+        $("#tdcOverlay").show();
+        startEncoding();
     });
     $("#ntu-cleaner").on("click", function () {
         $("#ntu-message").empty()

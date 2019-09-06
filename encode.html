@@ -12,6 +12,7 @@
 
     <!-- Bootstrap core CSS, added by lyb, don't change-->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="default.css">
 </head>
 
@@ -47,13 +48,31 @@
             <h1 class="mt-5" style="text-align: left;border-bottom: 1px dashed #cbd3da;padding-bottom: 5px;">Click the
                 following button to
                 start</h1>
-            <p></p>
-            <button type="button" class="btn btn-primary btn-lg" id="ntu-starter">Start Transfer</button>
-            <button type="button" class="btn btn-danger btn-lg" id="ntu-cleaner">Clean Output</button>
-            <p></p>
             <div class="alert alert-warning" role="alert" id="ntu-state">
                 Waiting for running!
             </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-sm-3">
+            <div class="form-group row">
+                <label for="colFormLabelLg" class="col-sm-3 col-form-label col-form-label-lg">Time:</label>
+                <div class="col-sm-9">
+                    <input type="email" class="form-control form-control-lg" id="colFormLabelLg" placeholder="00:00:00">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-info btn-lg" id="ntu-scheduler">Schedule</button>
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-primary btn-lg" id="ntu-starter">Start</button>
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-danger btn-lg" id="ntu-cleaner">Clean Output</button>
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-danger btn-lg" id="ntu-muter">Mute</button>
         </div>
     </div>
     <div class="row">
@@ -86,12 +105,26 @@
                                 Please provide a valid duration.
                             </div>
                         </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="tdcMuteOut">
+                            <label class="form-check-label" for="tdcMuteOut">Mute output</label>
+                        </div>
+
                     </form>
                 </div>
             </div>
         </div>
         <div class="col-sm-9">
             <div class="card tdc-card">
+                <h5 class="card-header h5">Final Results</h5>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="tdcFinalResult">Array Like:</label>
+                        <textarea class="form-control" id="tdcFinalResult" rows="5"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="card tdc-card" style="margin-top: 20px;">
                 <h5 class="card-header h5">Debug Information</h5>
                 <div class="card-body">
                     <ul class="list-group" id="ntu-message"></ul>
@@ -100,10 +133,12 @@
         </div>
     </div>
 </div>
-
+<div id="tdcOverlay">
+    <span style="color: yellow;font-size: 20px; font-weight: bold;">Running......</span>
+</div>
 <!-- Bootstrap core JavaScript, added by lyb, don't change-->
 <script src="vendor/jquery/jquery.js"></script>
-
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- NTU Team, added by lyb, don't change-->
 <script src="encode.js"></script>
