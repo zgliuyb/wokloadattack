@@ -16,7 +16,8 @@ const debug = true
 let high_level = 10
 let low_level = 10
 let seq = "1010101";
-let finalOut = []
+let finalOut = [];
+let isMute = false;
 
 //==============================================
 /**
@@ -37,7 +38,7 @@ function running(ms) {
     let end = start;
     while (end < start + ms) {
         end = new Date().getTime();
-        var primes = calculatePrimes(iterations, multiplier);
+        const primes = calculatePrimes(iterations, multiplier);
     }
 }
 
@@ -48,7 +49,7 @@ function running(ms) {
  * @returns {Date}
  */
 function targetTimer(hour, minute, sec) {
-    var t = new Date();
+    const t = new Date();
     t.setHours(hour);
     t.setMinutes(minute);
     t.setSeconds(sec);
@@ -63,12 +64,12 @@ function targetTimer(hour, minute, sec) {
  * @returns {[]}
  */
 function calculatePrimes(iterations, multiplier) {
-    var start = new Date().getTime();
-    var primes = [];
-    for (var i = 0; i < iterations; i++) {
-        var candidate = i * (multiplier * Math.random());
-        var isPrime = true;
-        for (var c = 2; c <= Math.sqrt(candidate); ++c) {
+    let start = new Date().getTime();
+    const primes = [];
+    for (let i = 0; i < iterations; i++) {
+        const candidate = i * (multiplier * Math.random());
+        let isPrime = true;
+        for (let c = 2; c <= Math.sqrt(candidate); ++c) {
             if (candidate % c === 0) {
                 // not prime
                 isPrime = false;
@@ -79,7 +80,7 @@ function calculatePrimes(iterations, multiplier) {
             primes.push(candidate);
         }
     }
-    var end = new Date().getTime();
+    const end = new Date().getTime();
     if (debug) {
         console.warn("Cost " + (end - start) + "ms")
     }
@@ -105,7 +106,7 @@ async function main() {
             let startTime = getCurTime();
             running(high_level * 1000)
             let endTime = getCurTime();
-            if (debug) {
+            if (debug && !isMute) {
                 $("#ntu-message").append("<li class=\"list-group-item list-group-item-success\">" + startTime + "<->" + endTime + ": Bit 1</li>")
             }
             finalOut.push([startTime, endTime, 1])
@@ -114,7 +115,9 @@ async function main() {
             await waiting(high_level * 1000).then(() => {
                 let endTime = getCurTime()
                 finalOut.push([startTime, endTime, 0])
-                $("#ntu-message").append("<li class=\"list-group-item list-group-item-danger\">" + startTime + "<->" + endTime + ": Bit 0</li>")
+                if (debug && !isMute) {
+                    $("#ntu-message").append("<li class=\"list-group-item list-group-item-danger\">" + startTime + "<->" + endTime + ": Bit 0</li>")
+                }
             })
             await waiting(300)
         }
@@ -182,36 +185,49 @@ function startEncoding() {
     high_level = isEmpty(tmp) ? parseInt(high_level) : tmp;
     tmp = $("#tdcInputLL").val()
     low_level = isEmpty(tmp) ? parseInt(low_level) : tmp;
+    isMute = $("#tdcMuteOut").is(":checked")
+    tmp = $("#tdcRunningWay").val()
     console.log(seq, high_level, low_level)
-    Promise.resolve().then(() => {
-        if (debug) {
-            console.log("App started");
-            $("#ntu-state").text("Running!")
+
+    if (tmp == "Loop") {
+        Promise.resolve().then(() => {
+            if (debug) {
+                console.log("App started");
+                $("#ntu-state").text("Running!")
+            }
+            $("#ntu-starter").prop("disabled", true)
+            $("#ntu-cleaner").prop("disabled", true)
+        }).then(() => {
+            setTimeout(function () {
+                main().then(r => {
+                    $("#ntu-starter").prop("disabled", false)
+                    $("#ntu-cleaner").prop("disabled", false)
+
+                    $('#ntu-state').removeClass('alert-warning').addClass('alert-success');
+
+                    $("#ntu-state").text("Finished!");
+                    $("#tdcFinalResult").val(JSON.stringify(finalOut));
+                    $("#tdcOverlay").hide(300);
+                })
+            }, 100);
+        });
+    } else if (tmp === "Worker.js") {
+        const tdcWorker = new Worker('workload.js');
+        tdcWorker.postMessage([seq, high_level, low_level, iterations, multiplier, finalOut, "PlaceHolder"]);
+        console.log('Message posted to worker');
+        tdcWorker.onmessage = function (e) {
+            let textContent = e.data;
+            console.log('Message received from worker');
         }
-        $("#ntu-starter").prop("disabled", true)
-        $("#ntu-cleaner").prop("disabled", true)
-    }).then(() => {
-        setTimeout(function () {
-            main().then(r => {
-                $("#ntu-starter").prop("disabled", false)
-                $("#ntu-cleaner").prop("disabled", false)
-
-                $('#ntu-state').removeClass('alert-warning').addClass('alert-success');
-
-                $("#ntu-state").text("Finished!");
-                $("#tdcFinalResult").val(JSON.stringify(finalOut));
-                $("#tdcOverlay").hide(300);
-            })
-        }, 100);
-
-    });
+        tdcWorker.terminate();
+    }
 }
 
 $(function () {
     let now = new Date().toLocaleTimeString()
 
     function getTwentyFourHourTime(now) {
-        var d = new Date("1/1/2013 " + now);
+        const d = new Date("1/1/2013 " + now);
         return d.getHours() + ':' + d.getMinutes() + ":" + d.getSeconds();
     }
 

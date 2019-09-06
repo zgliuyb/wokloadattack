@@ -45,7 +45,8 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-12 text-center">
-            <h1 class="mt-5" style="text-align: left;border-bottom: 1px dashed #cbd3da;padding-bottom: 5px;">Transmitter</h1>
+            <h1 class="mt-5" style="text-align: left;border-bottom: 1px dashed #cbd3da;padding-bottom: 5px;">
+                Transmitter</h1>
         </div>
     </div>
     <div class="row" style="margin-bottom: 20px;">
@@ -53,7 +54,8 @@
             <div class="form-group row">
                 <label for="colFormLabelLg" class="col-sm-3 col-form-label col-form-label-lg">Time:</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control form-control-lg" id="colFormLabelLg" maxlength="8" placeholder="00:00:00">
+                    <input type="text" class="form-control form-control-lg" id="colFormLabelLg" maxlength="8"
+                           placeholder="00:00:00">
                     <div class="invalid-feedback">
                         Please provide a valid value.
                     </div>
@@ -100,6 +102,13 @@
                                 Please provide a valid duration.
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="tdcRunningWay">Running Mode</label>
+                            <select class="form-control" id="tdcRunningWay">
+                                <option>Loop</option>
+                                <option>Worker.js</option>
+                            </select>
+                        </div>
                         <div class="form-group form-check">
                             <input type="checkbox" class="form-check-input" id="tdcMuteOut">
                             <label class="form-check-label" for="tdcMuteOut">Mute output</label>
@@ -129,7 +138,7 @@
     </div>
     <div class="row" style="margin-top: 20px;">
         <div class="col-lg-3 text-center">
-            <span id="tdcTimer"></span>
+            <span id="tdcTimer" style="font-size: 16px;font-weight: bold;color: #e0a800;"></span>
         </div>
         <div class="col-lg-9 text-center">
             <div class="alert alert-secondary" role="alert" id="ntu-state">
