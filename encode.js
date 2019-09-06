@@ -1,3 +1,13 @@
+/*!
+ * Web Workloads Attack V0.1
+ *
+ * Copyright JS Foundation and other contributors
+ * Released under the MIT license
+ *
+ * Author: LYB,LHT
+ * Date: 2019-09-06T21:04Z
+ *
+ */
 const iterations = 50;
 const multiplier = 1000000000;
 
@@ -9,12 +19,17 @@ let seq = "1010101";
 let finalOut = []
 
 //==============================================
+/**
+ * Waiting for ms
+ * @param ms
+ * @returns {Promise<unknown>}
+ */
 function waiting(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 /**
- * ms
+ * Running for
  * @param ms
  */
 function running(ms) {
@@ -24,6 +39,21 @@ function running(ms) {
         end = new Date().getTime();
         var primes = calculatePrimes(iterations, multiplier);
     }
+}
+
+/**
+ *
+ * @param hour
+ * @param minute
+ * @returns {Date}
+ */
+function targetTimer(hour, minute, sec) {
+    var t = new Date();
+    t.setHours(hour);
+    t.setMinutes(minute);
+    t.setSeconds(sec);
+    t.setMilliseconds(0);
+    return t;
 }
 
 /**
@@ -56,8 +86,12 @@ function calculatePrimes(iterations, multiplier) {
     return primes;
 }
 
+/**
+ *
+ * @returns {string}
+ */
 function getCurTime() {
-    let startTime = new Date().toISOString()
+    let startTime = new Date().toLocaleString()
     return startTime;
 }
 
@@ -87,8 +121,58 @@ async function main() {
     }
 }
 
+/**
+ *
+ * @param property
+ * @returns {boolean}
+ */
 function isEmpty(property) {
     return (property === null || property === "" || typeof property === "undefined");
+}
+
+/**
+ *
+ * @param h
+ * @param m
+ * @param s
+ */
+function startScheduling(h, m, s) {
+    let tTime = targetTimer(h, m, s).getTime()
+    let cTime = new Date().getTime();
+    let offset = tTime - cTime;
+    if (offset >= 0) {
+        setTimeout(function () {
+            $("#ntu-starter").trigger('click');
+            console.log("Start Experiments.")
+        }, offset);
+    }
+    countDownTimer(h, m, s)
+}
+
+/**
+ *
+ * @param n
+ * @returns {string}
+ */
+function pad(n) {
+    return n < 10 ? '0' + n : n
+}
+
+function countDownTimer(h, m, s) {
+    let tdcTimer = setInterval(function () {
+        let now = new Date().getTime();
+        let distance = targetTimer(h, m, s) - now;
+
+        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        $("#tdcTimer").text(pad(hours) + ":" + pad(minutes) + ":" + pad(seconds))
+        if (distance < 0) {
+            clearInterval(tdcTimer);
+            $("#tdcTimer").text("EXPIRED")
+        }
+    }, 1000);
 }
 
 function startEncoding() {
@@ -124,12 +208,36 @@ function startEncoding() {
 }
 
 $(function () {
+    let now = new Date().toLocaleTimeString()
+
+    function getTwentyFourHourTime(now) {
+        var d = new Date("1/1/2013 " + now);
+        return d.getHours() + ':' + d.getMinutes() + ":" + d.getSeconds();
+    }
+
+    $("#colFormLabelLg").val(getTwentyFourHourTime(now));
+
+    $("#ntu-scheduler").on("click", function () {
+
+        let dest = $("#colFormLabelLg").val()
+        let destTime = dest.split(" ")[0];
+        let result = /([0-9]|[0-9]{2}:[0-9]|[0-9]{2}:[0-9]|[0-9]{2})/g.test(destTime);
+        let finalValue = null
+        if (result) {
+            finalValue = destTime.split(":")
+            startScheduling(finalValue[0], finalValue[1], finalValue[2]);
+        } else {
+            $("#colFormLabelLg").addClass('is-invalid');
+        }
+        $("#ntu-scheduler").prop("disabled", true);
+    });
     $("#ntu-starter").on("click", function () {
         $("#tdcOverlay").show();
         startEncoding();
     });
     $("#ntu-cleaner").on("click", function () {
         $("#ntu-message").empty()
+        $("#tdcFinalResult").val('')
     });
     $("#tdcInputInfo, #tdcInputHL, #tdcInputLL").on("keyup", function () {
         if (!/^\d+$/.test($(this).val())) {
