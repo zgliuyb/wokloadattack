@@ -70,6 +70,65 @@ function startScheduling(h, m, s) {
 }
 
 /**
+ * worker.js Mode
+ */
+function workJsMode() {
+    let workCount = workThread;
+
+    let workThread = []
+
+    for (let i = 0; i < workCount; i++) {
+        let tdcWorker = new Worker('workload.js');
+        workThread.push(tdcWorker);
+    }
+    for (let i = 0; i < workCount; i++) {
+        let tdcWorker = workThread[i];
+        tdcWorker.postMessage(["true", seq, high_level, low_level, iterations, multiplier, finalOut, "PlaceHolder"]);
+        tdcWorker.onmessage = function (e) {
+            let textContent = e.data;
+            let tmp = $("#tdcFinalResult").val()
+            tmp = tmp + ",##THD" + i + "##" + JSON.stringify(textContent)
+            $("#tdcFinalResult").val(tmp);
+            tmp = $("#ntu-state").text()
+            tmp = tmp + ",##THD" + i + ":Finished##"
+            $("#ntu-state").text(tmp);
+            let rest = $('#tdcOverlay').is(':visible');
+            if (rest) {
+                $("#tdcOverlay").hide(300);
+            }
+
+        }
+    }
+}
+
+/**
+ * Loop mode
+ */
+function loopMode() {
+    Promise.resolve().then(() => {
+        if (debug) {
+            console.log("App started");
+            $("#ntu-state").text("Running!")
+        }
+        $("#ntu-starter").prop("disabled", true)
+        $("#ntu-cleaner").prop("disabled", true)
+    }).then(() => {
+        setTimeout(function () {
+            OnOffKeyTransmitter().then(r => {
+                $("#ntu-starter").prop("disabled", false)
+                $("#ntu-cleaner").prop("disabled", false)
+
+                $('#ntu-state').removeClass('alert-warning').addClass('alert-success');
+
+                $("#ntu-state").text("Finished!");
+                $("#tdcFinalResult").val(JSON.stringify(finalOut));
+                $("#tdcOverlay").hide(300);
+            })
+        }, 100);
+    });
+}
+
+/**
  * start test
  */
 function startEncoding() {
@@ -84,55 +143,9 @@ function startEncoding() {
     console.log(seq, high_level, low_level)
 
     if (tmp == "Loop") {
-        Promise.resolve().then(() => {
-            if (debug) {
-                console.log("App started");
-                $("#ntu-state").text("Running!")
-            }
-            $("#ntu-starter").prop("disabled", true)
-            $("#ntu-cleaner").prop("disabled", true)
-        }).then(() => {
-            setTimeout(function () {
-                OnOffKeyTransmitter().then(r => {
-                    $("#ntu-starter").prop("disabled", false)
-                    $("#ntu-cleaner").prop("disabled", false)
-
-                    $('#ntu-state').removeClass('alert-warning').addClass('alert-success');
-
-                    $("#ntu-state").text("Finished!");
-                    $("#tdcFinalResult").val(JSON.stringify(finalOut));
-                    $("#tdcOverlay").hide(300);
-                })
-            }, 100);
-        });
+        loopMode();
     } else if (tmp === "Worker.js") {
-        let workCount = workThread;
-
-        let workThread = []
-
-        for (let i = 0; i < workCount; i++) {
-            let tdcWorker = new Worker('workload.js');
-            workThread.push(tdcWorker);
-        }
-        for (let i = 0; i < workCount; i++) {
-            let tdcWorker = workThread[i];
-            tdcWorker.postMessage(["true", seq, high_level, low_level, iterations, multiplier, finalOut, "PlaceHolder"]);
-            tdcWorker.onmessage = function (e) {
-                let textContent = e.data;
-                let tmp = $("#tdcFinalResult").val()
-                tmp = tmp + ",##THD" + i + "##" + JSON.stringify(textContent)
-                $("#tdcFinalResult").val(tmp);
-                tmp = $("#ntu-state").text()
-                tmp = tmp + ",##THD" + i + ":Finished##"
-                $("#ntu-state").text(tmp);
-                let rest = $('#tdcOverlay').is(':visible');
-                if (rest) {
-                    $("#tdcOverlay").hide(300);
-                }
-
-            }
-        }
-        //tdcWorker.terminate();
+        workJsMode();
     }
 }
 
