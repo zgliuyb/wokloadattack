@@ -7,4 +7,4 @@ This is a demo of using cpu loads to deliver infomation.
 
 ## Copyright and License
 
-Copyright 2019-2019 NTU. 
+Copyright 2019-2019 NTU Security. 

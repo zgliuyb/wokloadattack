@@ -4,26 +4,29 @@
  * Copyright JS Foundation and other contributors
  * Released under the MIT license
  *
- * Author: LYB,LHT
+ * Author: LYB, LHT
  * Date: 2019-09-06T21:04Z
  *
  */
 const iterations = 50;
 const multiplier = 1000000000;
 
-const debug = true
+const debug = true;
 
-let high_level = 10
-let low_level = 10
+let high_level = 10;
+let low_level = 10;
 let seq = "1010101";
 let finalOut = [];
+
 let isMute = false;
+
+let workThread = 3;
 
 /**
  * Main function
  * @returns {Promise<void>}
  */
-async function main() {
+async function OnOffKeyTransmitter() {
     for (let i = 0; i < seq.length; i++) {
         if (seq[i] == '1') {
             let startTime = getCurTime();
@@ -48,7 +51,7 @@ async function main() {
 }
 
 /**
- *
+ * start scheduling at h:m:s
  * @param h
  * @param m
  * @param s
@@ -66,7 +69,9 @@ function startScheduling(h, m, s) {
     countDownTimer(h, m, s)
 }
 
-
+/**
+ * start test
+ */
 function startEncoding() {
     let tmp = $("#tdcInputInfo").val()
     seq = isEmpty(tmp) ? seq : tmp;
@@ -88,7 +93,7 @@ function startEncoding() {
             $("#ntu-cleaner").prop("disabled", true)
         }).then(() => {
             setTimeout(function () {
-                main().then(r => {
+                OnOffKeyTransmitter().then(r => {
                     $("#ntu-starter").prop("disabled", false)
                     $("#ntu-cleaner").prop("disabled", false)
 
@@ -101,8 +106,10 @@ function startEncoding() {
             }, 100);
         });
     } else if (tmp === "Worker.js") {
-        let workCount = 3;
+        let workCount = workThread;
+
         let workThread = []
+
         for (let i = 0; i < workCount; i++) {
             let tdcWorker = new Worker('workload.js');
             workThread.push(tdcWorker);
@@ -129,6 +136,11 @@ function startEncoding() {
     }
 }
 
+//=============================================
+//
+//  Encoding main entrance
+//
+//=============================================
 $(function () {
     let now = new Date().toLocaleTimeString()
 
@@ -153,14 +165,17 @@ $(function () {
         }
         $("#ntu-scheduler").prop("disabled", true);
     });
+
     $("#ntu-starter").on("click", function () {
         $("#tdcOverlay").show();
         startEncoding();
     });
+
     $("#ntu-cleaner").on("click", function () {
         $("#ntu-message").empty()
         $("#tdcFinalResult").val('')
     });
+
     $("#tdcInputInfo, #tdcInputHL, #tdcInputLL").on("keyup", function () {
         if (!/^\d+$/.test($(this).val())) {
             $(this).addClass('is-invalid');
@@ -169,4 +184,5 @@ $(function () {
             $(this).removeClass('is-invalid');
         }
     });
+
 });

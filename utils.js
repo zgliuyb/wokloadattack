@@ -1,4 +1,3 @@
-//==============================================
 /**
  * Waiting for ms
  * @param ms
@@ -9,7 +8,7 @@ function waiting(ms) {
 }
 
 /**
- * Running for
+ * Running for ms
  * @param ms
  */
 function running(ms) {
@@ -22,7 +21,7 @@ function running(ms) {
 }
 
 /**
- *
+ * set a timer with parameters
  * @param hour
  * @param minute
  * @returns {Date}
@@ -37,7 +36,7 @@ function targetTimer(hour, minute, sec) {
 }
 
 /**
- *
+ * spawn a cpu intensive task
  * @param iterations
  * @param multiplier
  * @returns {[]}
@@ -67,7 +66,7 @@ function calculatePrimes(iterations, multiplier) {
 }
 
 /**
- *
+ * get cur time in the format of LOCAL
  * @returns {string}
  */
 function getCurTime() {
@@ -76,7 +75,7 @@ function getCurTime() {
 }
 
 /**
- *
+ * pad 0 in the front of string
  * @param n
  * @returns {string}
  */
@@ -84,6 +83,12 @@ function pad(n) {
     return n < 10 ? '0' + n : n
 }
 
+/**
+ *  a count down timer for scheduler
+ * @param h
+ * @param m
+ * @param s
+ */
 function countDownTimer(h, m, s) {
     let tdcTimer = setInterval(function () {
         let now = new Date().getTime();
@@ -102,7 +107,7 @@ function countDownTimer(h, m, s) {
 }
 
 /**
- *
+ * check if a string variable is null, none or empty
  * @param property
  * @returns {boolean}
  */
