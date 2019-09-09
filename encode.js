@@ -20,7 +20,7 @@ let finalOut = [];
 
 let isMute = false;
 
-let workThread = 3;
+let workThreadCount = 3;
 
 /**
  * Main function
@@ -72,8 +72,8 @@ function startScheduling(h, m, s) {
 /**
  * worker.js Mode
  */
-function workJsMode() {
-    let workCount = workThread;
+function workJsMode(workThreadCount) {
+    let workCount = workThreadCount;
 
     let workThread = []
 
@@ -135,17 +135,20 @@ function startEncoding() {
     let tmp = $("#tdcInputInfo").val()
     seq = isEmpty(tmp) ? seq : tmp;
     tmp = $("#tdcInputHL").val()
-    high_level = isEmpty(tmp) ? parseInt(high_level) : tmp;
+    high_level = isEmpty(tmp) ? high_level : parseInt(tmp);
     tmp = $("#tdcInputLL").val()
-    low_level = isEmpty(tmp) ? parseInt(low_level) : tmp;
+    low_level = isEmpty(tmp) ? low_level : parseInt(tmp);
+    tmp = $("#tdcThread").val()
+    workThreadCount = isEmpty(tmp) ? workThreadCount : parseInt(tmp);
     isMute = $("#tdcMuteOut").is(":checked")
     tmp = $("#tdcRunningWay").val()
+
     console.log(seq, high_level, low_level)
 
     if (tmp == "Loop") {
         loopMode();
     } else if (tmp === "Worker.js") {
-        workJsMode();
+        workJsMode(workThreadCount);
     }
 }
 

@@ -4,7 +4,7 @@
  * @returns {Promise<unknown>}
  */
 function waiting(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**

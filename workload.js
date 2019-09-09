@@ -94,4 +94,4 @@ onmessage = async function (e) {
     } else {
         console.log('Waiting for message arriving at');
     }
-}
+};
