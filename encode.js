@@ -158,10 +158,9 @@ function startEncoding() {
 //
 //=============================================
 $(function () {
-    let now = new Date().toLocaleTimeString()
+    let now = new Date()
 
-    function getTwentyFourHourTime(now) {
-        const d = new Date("1/1/2013 " + now);
+    function getTwentyFourHourTime(d) {
         return d.getHours() + ':' + d.getMinutes() + ":" + d.getSeconds();
     }
 
