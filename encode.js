@@ -19,83 +19,6 @@ let seq = "1010101";
 let finalOut = [];
 let isMute = false;
 
-//==============================================
-/**
- * Waiting for ms
- * @param ms
- * @returns {Promise<unknown>}
- */
-function waiting(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-/**
- * Running for
- * @param ms
- */
-function running(ms) {
-    let start = new Date().getTime();
-    let end = start;
-    while (end < start + ms) {
-        end = new Date().getTime();
-        const primes = calculatePrimes(iterations, multiplier);
-    }
-}
-
-/**
- *
- * @param hour
- * @param minute
- * @returns {Date}
- */
-function targetTimer(hour, minute, sec) {
-    const t = new Date();
-    t.setHours(hour);
-    t.setMinutes(minute);
-    t.setSeconds(sec);
-    t.setMilliseconds(0);
-    return t;
-}
-
-/**
- *
- * @param iterations
- * @param multiplier
- * @returns {[]}
- */
-function calculatePrimes(iterations, multiplier) {
-    let start = new Date().getTime();
-    const primes = [];
-    for (let i = 0; i < iterations; i++) {
-        const candidate = i * (multiplier * Math.random());
-        let isPrime = true;
-        for (let c = 2; c <= Math.sqrt(candidate); ++c) {
-            if (candidate % c === 0) {
-                // not prime
-                isPrime = false;
-                break;
-            }
-        }
-        if (isPrime) {
-            primes.push(candidate);
-        }
-    }
-    const end = new Date().getTime();
-    if (debug) {
-        console.warn("Cost " + (end - start) + "ms")
-    }
-    return primes;
-}
-
-/**
- *
- * @returns {string}
- */
-function getCurTime() {
-    let startTime = new Date().toLocaleString()
-    return startTime;
-}
-
 /**
  * Main function
  * @returns {Promise<void>}
@@ -126,15 +49,6 @@ async function main() {
 
 /**
  *
- * @param property
- * @returns {boolean}
- */
-function isEmpty(property) {
-    return (property === null || property === "" || typeof property === "undefined");
-}
-
-/**
- *
  * @param h
  * @param m
  * @param s
@@ -152,31 +66,6 @@ function startScheduling(h, m, s) {
     countDownTimer(h, m, s)
 }
 
-/**
- *
- * @param n
- * @returns {string}
- */
-function pad(n) {
-    return n < 10 ? '0' + n : n
-}
-
-function countDownTimer(h, m, s) {
-    let tdcTimer = setInterval(function () {
-        let now = new Date().getTime();
-        let distance = targetTimer(h, m, s) - now;
-
-        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        $("#tdcTimer").text(pad(hours) + ":" + pad(minutes) + ":" + pad(seconds))
-        if (distance < 0) {
-            clearInterval(tdcTimer);
-            $("#tdcTimer").text("EXPIRED")
-        }
-    }, 1000);
-}
 
 function startEncoding() {
     let tmp = $("#tdcInputInfo").val()
@@ -212,14 +101,31 @@ function startEncoding() {
             }, 100);
         });
     } else if (tmp === "Worker.js") {
-        const tdcWorker = new Worker('workload.js');
-        tdcWorker.postMessage([seq, high_level, low_level, iterations, multiplier, finalOut, "PlaceHolder"]);
-        console.log('Message posted to worker');
-        tdcWorker.onmessage = function (e) {
-            let textContent = e.data;
-            console.log('Message received from worker');
+        let workCount = 3;
+        let workThread = []
+        for (let i = 0; i < workCount; i++) {
+            let tdcWorker = new Worker('workload.js');
+            workThread.push(tdcWorker);
         }
-        tdcWorker.terminate();
+        for (let i = 0; i < workCount; i++) {
+            let tdcWorker = workThread[i];
+            tdcWorker.postMessage(["true", seq, high_level, low_level, iterations, multiplier, finalOut, "PlaceHolder"]);
+            tdcWorker.onmessage = function (e) {
+                let textContent = e.data;
+                let tmp = $("#tdcFinalResult").val()
+                tmp = tmp + ",##THD" + i + "##" + JSON.stringify(textContent)
+                $("#tdcFinalResult").val(tmp);
+                tmp = $("#ntu-state").text()
+                tmp = tmp + ",##THD" + i + ":Finished##"
+                $("#ntu-state").text(tmp);
+                let rest = $('#tdcOverlay').is(':visible');
+                if (rest) {
+                    $("#tdcOverlay").hide(300);
+                }
+
+            }
+        }
+        //tdcWorker.terminate();
     }
 }
 
